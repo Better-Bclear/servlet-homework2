@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.min.css">
+
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="../css/home.css">
+
+    <script src="../js/bootstrap.bundle.js"></script>
+    <script src="../js/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 头部导航 -->
+        <div class="navbar  bg-dark navbar-expand-md w-100 ps-5 pe-5 ">
+            <!-- 左侧商城名字 -->
+            <div class="navbar-brand  text-success fs-5 me-5">
+                电影院购票系统
+            </div>
+            <!-- 中间导航输入框 -->
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li href="#" class="nav-item me-3">
+                        <a href="index.html" class="nav-link active text-white">首页</a>
+                    </li>
+                    <li href="#" class="nav-item  me-3">
+                        <a href="movie.html" class="nav-link text-white">电影</a>
+                    </li>
+                    <li class="nav-item  me-3">
+                        <input type="text" class="search border-0  ps-2 pt-1 pb-1 mt-1 opacity-100 " placeholder="搜索电影">
+                    </li>
+                </ul>
+            </div>
+            <!-- 右侧用户头像 -->
+            <div class="avatar position-relative">
+                <img src="../img/head.jpg" class="rounded-circle" alt="">
+                <!-- <a class="login border position-absolute end-0 top-100 text-center  text-decoration-none text-white d-none" style="width:100px;height:50px;line-height: 50px;">登录</a> -->
+            </div>
+
+        </div>
+        <!-- 主体部分 -->
+        <div class="container-fluid d-flex justify-space-between">
+            <!-- 左侧导航条 -->
+            <ul class="nav flex-column bg-light pt-5 text-center" style="height:calc(100vh - 56px);width:15%;">
+                <li class="nav-title mb-3">
+                    <h3>后台管理</h3>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-dark" href="user.html">用户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="movie.html">电影管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="javascript:void(0)">影院管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="hall.html">放映厅管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="schedule.html">场次管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="comment.html">评论管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="order.html">订单管理</a>
+                </li>
+            </ul>
+            <!-- 影院管理 -->
+            <div class="Cinema-management border ps-5 pt-3" style="width:85%;height:calc(100vh - 56px);">
+                <!-- 标题 -->
+                <div class="Cinema-management-title fs-5 border-bottom text-danger pb-3">影院管理</div>
+                <!-- 搜索条件 -->
+                <div class="search-info d-flex pt-2 pb-2 bg-light border ps-5 w-100 mt-5">
+                    <button class="bg-warning text-white border-0 ps-2 pe-2" data-bs-toggle="modal" data-bs-target="#addCinema">添加影院</button>
+                    <div class="ms-5 d-flex ">
+                        <input type="text" placeholder="请输入影院名" class="form-control ps-2 pt-1 pb-1 ms-1" style="width:150px;">
+                        <input type="text" placeholder="请输入影院地址" class="form-control ps-2 pt-1 pb-1 ms-1" style="width: 200px;">
+                        <button class="bg-success border-0 text-white ms-1" style="width:50px">搜索</button>
+                    </div>
+                </div>
+                <!-- 表格 -->
+                <table id="table" class="w-100 text-center border">
+                    <!-- 表格内容 -->
+                    <thead class="bg-light">
+                        <tr class="border-bottom">
+                            <th class="border pt-2 pb-2">影院ID</th>
+                            <th class="border pt-2 pb-2">影院名称</th>
+
+                            <th class="border pt-2 pb-2">影院地址</th>
+                            <th class="border pt-2 pb-2">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-bottom" v-for="c in cinemas" :key="c.cinemaId">
+                            <td class="border pt-2 pb-2">{{c.cinemaId}}</td>
+                            <td class="border pt-2 pb-2">{{c.cinemaName}}</td>
+                            <td class="border pt-2 pb-2">{{c.cinemaAddress}}</td>
+                            <td class="border pt-2 pb-2">
+                                <button class="border bg-info"><a href="#" @click.prevent="openEditCinemaModal"
+                                        class="text-decoration-none text-dark ">更新</a></button>
+                                <button class="border bg-danger"><a href="#"
+                                        class="text-decoration-none text-white " @click="openConfirmDeleteModal(c.cinemaId)">删除</a></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- 添加影院的模态框 -->
+                <div id="addCinema" class="modal fade">
+                    <div class="modal-dialog modal-md modal-dialog-centered ">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">添加影院</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                 <div class="mb-3 row">
+                                    <label for="cinemaName" class="col-4 col-form-label text-center">电影院</label>
+                                    <div class="col-8">
+                                    <input type="text" class="form-control form-control-sm" id="cinemaName">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="cinemaAddress" class="col-4 col-form-label text-center">影院地址</label>
+                                    <div class="col-8">
+                                    <textarea class="form-control" id="cinemaAddress"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-danger" data-bs-dismiss="modal">取消</button>
+                                <button class="btn btn-success" @click="addCinema">确定</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 点击查看显示的内容 -->
+                <div id="editCinema" class="modal fade">
+                    <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">编辑影院信息</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                
+                                <div class="mb-3 row">
+                                    <label for="cinemaName" class="col-4 col-form-label text-center">电影院</label>
+                                    <div class="col-8">
+                                    <input type="text" class="form-control form-control-sm" id="cinemaName">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="cinemaAddress" class="col-4 col-form-label text-center">影院地址</label>
+                                    <div class="col-8">
+                                    <textarea class="form-control" id="cinemaAddress"></textarea>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">取消</button>
+                                <button class="btn btn-success btn-sm" @click="updateCinema">确定</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 显示删除确认的模块框 -->
+                <div id="confirmDelete" class="modal fade">
+                    <div class="modal-dialog modal-sm modal-dialog-centered p-0">
+                        <div class="modal-content">
+                        
+                            <div class="modal-body">
+                                <h5>确认删除吗?</h5>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-info btn-sm" data-bs-dismiss="modal">取消</button>
+                                <button class="btn btn-danger btn-sm" @click="deleteCinema">确定</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 显示操作结果的模态框 -->
+                <!-- <div id="showInfo" class="modal fade">
+                    <div class="modal-dialog modal-sm modal-dialog-centered p-0">
+                        <div class="modal-content">
+                           
+                            <div class="modal-body">
+                                <div class="alert alert-danger" role="alert">
+                                A simple danger alert—check it out!
+                                </div>
+                            </div>
+                    
+                        </div>
+                    </div>
+
+                </div>
+ -->
+                <!-- 分页 -->
+                <div class="w-100 d-flex pagination-container border align-items-center ps-5">
+                    <!-- 每页数量 -->
+                    <select name="pageCount" id="pageCount" class="h-50">
+                        <option value="10">10条/每页</option>
+                        <option value="15">15条/每页</option>
+                        <option value="20">20条/每页</option>
+                    </select>
+                    <!-- 数据总条数 -->
+                    <div class="ms-3 me-3 h-50 mt-2">共<span>22</span>条</div>
+                    <!-- 分页按钮   -->
+                    <ul class="pagination  h-50 mb-2">
+                        <li class="page-item">
+                            <a class="page-link border-0 text-dark" href="#" aria-label="Previous">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" v-for="page in pages"><a class="page-link border-0 text-dark" href="#" @click.prevent="pageCinemas(page)">{{page}}</a></li>
+                        <!-- <li class="page-item "><a class="page-link border-0 text-dark" href="#">2</a></li>
+                        <li class="page-item "><a class="page-link border-0 text-dark" href="#">3</a></li> -->
+                        <li class="page-item ">
+                            <a class="page-link border-0 text-dark" href="#" aria-label="Next">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex ms-3 h-50">
+                        <span>到 <input type="text" value="1" style="width:40px;text-align: center;">页</span>
+                        <button class="border ms-2">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            methods: {
+                deleteCinema(){
+                    alert("删除")
+                    this.getModal("confirmDelete").hide();
+                },
+                openConfirmDeleteModal(id){
+                   console.log(id);
+                   this.getModal("confirmDelete").show(); 
+                },
+                pageCinemas(page){
+                    alert(page);
+                },
+                addCinema(){
+                    //
+
+                    this.getModal("addCinema").hide();
+                    // this.getModal("showInfo").show();
+                },
+                updateCinema(){
+                    //
+
+                    this.getModal("editCinema").hide();
+                    // this.getModal("showInfo").show();
+                },
+                openEditCinemaModal() {
+                    this.getModal("editCinema").show();
+                },
+                getModal(modalId) {
+                    let modalDom = document.getElementById(modalId);
+                    if (modalDom) {
+                        /* let modal = bootstrap.Modal.getInstance(modalDom);
+                        if (!modal) {
+                            modal = new bootstrap.Modal(modalDom);
+                        } */
+                        return bootstrap.Modal.getOrCreateInstance(modalDom);
+
+                    } else {
+                        throw "无法获取到id为" + modalId + "的标签";
+                    }
+                }
+            },
+            data: {
+                pages:[1,2,3,4,5],
+                c:{},//用来接收或者更新的影院信息
+                cinemas: [{
+                    "cinemaAddress": "顺德区人昌路美的新都荟广场",
+                    "cinemaId": 1,
+                    "cinemaName": "大地影院"
+                }, {
+                    "cinemaAddress": "黄埔区科学城科学大道高德汇购物中心",
+                    "cinemaId": 2,
+                    "cinemaName": "万达影城"
+                }, {
+                    "cinemaAddress": "白云区钟落潭广从五路钟港大厦",
+                    "cinemaId": 3,
+                    "cinemaName": "成龙影城"
+                }, {
+                    "cinemaAddress": "天河区天河路228号正佳购物广场",
+                    "cinemaId": 4,
+                    "cinemaName": "飞扬影城"
+                }, {
+                    "cinemaAddress": "越秀区中山三路33号中华广场8楼",
+                    "cinemaId": 5,
+                    "cinemaName": "中华广场电影城"
+                }, {
+                    "cinemaAddress": "花都区狮岭镇阳光路丽莎广场七层",
+                    "cinemaId": 6,
+                    "cinemaName": "金逸影城"
+                }, {
+                    "cinemaAddress": "xxx",
+                    "cinemaId": 7,
+                    "cinemaName": "测试"
+                }]
+            },
+
+        })
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.min.css">
+
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="../css/home.css">
+
+    <script src="../js/bootstrap.bundle.js"></script>
+    <script src="../js/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 头部导航 -->
+        <div class="navbar  bg-dark navbar-expand-md w-100 ps-5 pe-5 ">
+            <!-- 左侧商城名字 -->
+            <div class="navbar-brand  text-success fs-5 me-5">
+                电影院购票系统
+            </div>
+            <!-- 中间导航输入框 -->
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li href="#" class="nav-item me-3">
+                        <a href="index.html" class="nav-link active text-white">首页</a>
+                    </li>
+                    <li href="#" class="nav-item  me-3">
+                        <a href="movie.html" class="nav-link text-white">电影</a>
+                    </li>
+                    <li class="nav-item  me-3">
+                        <input type="text" class="search border-0  ps-2 pt-1 pb-1 mt-1 opacity-100 " placeholder="搜索电影">
+                    </li>
+                </ul>
+            </div>
+            <!-- 右侧用户头像 -->
+            <div class="avatar position-relative">
+                <img src="../img/head.jpg" class="rounded-circle" alt="">
+                <!-- <a class="login border position-absolute end-0 top-100 text-center  text-decoration-none text-white d-none" style="width:100px;height:50px;line-height: 50px;">登录</a> -->
+            </div>
+
+        </div>
+        <!-- 主体部分 -->
+        <div class="container-fluid d-flex justify-space-between">
+            <!-- 左侧导航条 -->
+            <ul class="nav flex-column bg-light pt-5 text-center" style="height:calc(100vh - 56px);width:15%;">
+                <li class="nav-title mb-3">
+                    <h3>后台管理</h3>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-dark" href="user.html">用户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="movie.html">电影管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="cinema.html">影院管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="hall.html">放映厅管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="schedule.html">场次管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="javascript:void(0)">评论管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="order.html">订单管理</a>
+                </li>
+            </ul>
+            <!-- 评论管理 -->
+            <div class="Comment-management border ps-5 pt-3" style="width:85%;height:calc(100vh - 56px);">
+                <!-- 标题 -->
+                <div class="Comment-management-title fs-5 border-bottom text-danger pb-3">评论管理</div>
+                <!-- 搜索条件 -->
+                <div class="search-info d-flex pt-2 pb-2 bg-light border w-100 mt-5">
+                
+                    <div class="ms-2 d-flex ">
+                        <input type="text" placeholder="请输入用户账户名" class="form-control ps-2 pt-1 pb-1 ms-1" style="width:200px;">
+                        <button class="bg-success border-0 text-white ms-1" style="width:50px">搜索</button>
+                    </div>
+                </div>
+                <!-- 表格 -->
+                <table class="table-responsive text-center ">
+                    <!-- 表格内容 -->
+                    <thead class="bg-light">
+                        <tr class="border-bottom">
+                            <th class="border pt-2 pb-2">评论编号</th>
+                            <th class="border pt-2 pb-2">用户账号</th>
+
+                            <th class="border pt-2 pb-2">评论时间</th>
+                            <th class="border pt-2 pb-2 col-4 ">评论内容</th>
+
+                            <th class="border pt-2 pb-2">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-bottom" v-for="c in comments" :key="c.commentId">
+                            <td class="border pt-2 pb-2">{{c.commentId}}</td>
+                            <td class="border pt-2 pb-2">{{c.commentUser.userName}}</td>
+                            <td class="border pt-2 pb-2">{{c.commentTime}}</td>
+                            <td class="border pt-2 pb-2">
+                                        {{c.commentContent}}
+                            </td>
+                            <td class="border pt-2 pb-2">
+                               
+                                <button class="border bg-danger"  @click="openConfirmDeleteModal(c.commentId)">
+                                    <a href="javascript:void(0)" class="text-decoration-none text-white">删除</a>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+              
+
+
+                <!-- 显示删除确认的模块框 -->
+                <div id="confirmDelete" class="modal fade">
+                    <div class="modal-dialog modal-sm modal-dialog-centered p-0">
+                        <div class="modal-content">
+                        
+                            <div class="modal-body">
+                                <h5>确认删除吗?</h5>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-info btn-sm" data-bs-dismiss="modal">取消</button>
+                                <button class="btn btn-danger btn-sm" @click="deleteComment">确定</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分页 -->
+                <div class="w-100 d-flex pagination-container border align-items-center ps-5">
+                    <!-- 每页数量 -->
+                    <select name="pageCount" id="pageCount" class="h-50">
+                        <option value="10">10条/每页</option>
+                        <option value="15">15条/每页</option>
+                        <option value="20">20条/每页</option>
+                    </select>
+                    <!-- 数据总条数 -->
+                    <div class="ms-3 me-3 h-50 mt-2">共<span>22</span>条</div>
+                    <!-- 分页按钮   -->
+                    <ul class="pagination  h-50 mb-2">
+                        <li class="page-item">
+                            <a class="page-link border-0 text-dark" href="#" aria-label="Previous">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" v-for="page in pages"><a class="page-link border-0 text-dark" href="#" @click.prevent="pageComments(page)">{{page}}</a></li>
+                      
+                        <li class="page-item ">
+                            <a class="page-link border-0 text-dark" href="#" aria-label="Next">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex ms-3 h-50">
+                        <span>到 <input type="text" value="1" style="width:40px;text-align: center;">页</span>
+                        <button class="border ms-2">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            methods: {
+                deleteComment(){
+                    alert("删除")
+                    this.getModal("confirmDelete").hide();
+                },
+                openConfirmDeleteModal(id){
+                   console.log(id);
+                   this.getModal("confirmDelete").show(); 
+                },
+                pageComments(page){
+                    alert(page);
+                },
+                addComment(){
+                    //
+
+                    this.getModal("addComment").hide();
+                    // this.getModal("showInfo").show();
+                },
+                updateComment(){
+                    //
+
+                    this.getModal("editComment").hide();
+                    // this.getModal("showInfo").show();
+                },
+                openEditCommentModal() {
+                    this.getModal("editComment").show();
+                },
+                getModal(modalId) {
+                    let modalDom = document.getElementById(modalId);
+                    if (modalDom) {
+                        /* let modal = bootstrap.Modal.getInstance(modalDom);
+                        if (!modal) {
+                            modal = new bootstrap.Modal(modalDom);
+                        } */
+                        return bootstrap.Modal.getOrCreateInstance(modalDom);
+
+                    } else {
+                        throw "无法获取到id为" + modalId + "的标签";
+                    }
+                }
+            },
+            data: {
+                pages:[1,2,3,4,5],
+                c:{},//用来接收或者更新的评论信息
+                comments:[{
+                    "commentContent": "我觉得这部电影不错我觉得这部电影不错我觉得这部电影不错我觉得这部电影不错我觉得这部电影不错我觉得这部电影不错我觉得这部电影不错我觉得这部电影不错我觉得这部电影不错我觉得这部电影不错我觉得这部电影不错我觉得这部电影不错",
+                    "commentId": 5,
+                    "commentScore": 9,
+                    "commentTime": 1577973600000,
+                    "commentUser": {
+                        "userEmail": "823810399@qq.com",
+                        "userHeadImg": "/file/upload/head/c51a29cf-fe73-49d0-924a-cf7be0852d0f.jpg",
+                        "userId": 1,
+                        "userName": "admin",
+                        "userPwd": "123456",
+                        "userRole": 1
+                    },
+                    "movieId": 4,
+                    "userId": 1
+                }, {
+                    "commentContent": "12345",
+                    "commentId": 7,
+                    "commentScore": 9,
+                    "commentTime": 1577973600000,
+                    "commentUser": {
+                        "userEmail": "823810399@qq.com",
+                        "userHeadImg": "/file/upload/head/c51a29cf-fe73-49d0-924a-cf7be0852d0f.jpg",
+                        "userId": 1,
+                        "userName": "admin",
+                        "userPwd": "123456",
+                        "userRole": 1
+                    },
+                    "movieId": 2,
+                    "userId": 1
+                }, {
+                    "commentContent": "1234",
+                    "commentId": 9,
+                    "commentScore": 2,
+                    "commentTime": 1577973600000,
+                    "commentUser": {
+                        "userEmail": "314@qq.com",
+                        "userId": 9,
+                        "userName": "ww",
+                        "userPwd": "12345",
+                        "userRole": 0
+                    },
+                    "movieId": 3,
+                    "userId": 9
+                }, {
+                    "commentContent": "2222",
+                    "commentId": 13,
+                    "commentScore": 9,
+                    "commentTime": 1577973600000,
+                    "commentUser": {
+                        "userEmail": "314@qq.com",
+                        "userId": 9,
+                        "userName": "ww",
+                        "userPwd": "12345",
+                        "userRole": 0
+                    },
+                    "movieId": 2,
+                    "userId": 9
+                }, {
+                    "commentContent": "12312313",
+                    "commentId": 14,
+                    "commentScore": 9,
+                    "commentTime": 1577973600000,
+                    "commentUser": {
+                        "userEmail": "314@qq.com",
+                        "userId": 9,
+                        "userName": "ww",
+                        "userPwd": "12345",
+                        "userRole": 0
+                    },
+                    "movieId": 2,
+                    "userId": 9
+                }, {
+                    "commentContent": "123213",
+                    "commentId": 15,
+                    "commentScore": 9,
+                    "commentTime": 1577973600000,
+                    "commentUser": {
+                        "userEmail": "314@qq.com",
+                        "userId": 9,
+                        "userName": "ww",
+                        "userPwd": "12345",
+                        "userRole": 0
+                    },
+                    "movieId": 2,
+                    "userId": 9
+                }, {
+                    "commentContent": "123123",
+                    "commentId": 16,
+                    "commentScore": 9,
+                    "commentTime": 1577973600000,
+                    "commentUser": {
+                        "userEmail": "314@qq.com",
+                        "userId": 9,
+                        "userName": "ww",
+                        "userPwd": "12345",
+                        "userRole": 0
+                    },
+                    "movieId": 2,
+                    "userId": 9
+                }, {
+                    "commentContent": "123123",
+                    "commentId": 17,
+                    "commentScore": 9,
+                    "commentTime": 1577973600000,
+                    "commentUser": {
+                        "userEmail": "314@qq.com",
+                        "userId": 9,
+                        "userName": "ww",
+                        "userPwd": "12345",
+                        "userRole": 0
+                    },
+                    "movieId": 2,
+                    "userId": 9
+                }, {
+                    "commentContent": "123",
+                    "commentId": 18,
+                    "commentScore": 9,
+                    "commentTime": 1577973600000,
+                    "commentUser": {
+                        "userEmail": "314@qq.com",
+                        "userId": 9,
+                        "userName": "ww",
+                        "userPwd": "12345",
+                        "userRole": 0
+                    },
+                    "movieId": 2,
+                    "userId": 9
+                }, {
+                    "commentContent": "1231",
+                    "commentId": 19,
+                    "commentScore": 9,
+                    "commentTime": 1577973600000,
+                    "commentUser": {
+                        "userEmail": "314@qq.com",
+                        "userId": 9,
+                        "userName": "ww",
+                        "userPwd": "12345",
+                        "userRole": 0
+                    },
+                    "movieId": 2,
+                    "userId": 9
+                }]
+            },
+
+        })
+
+    </script>
+</body>
+
+</html>

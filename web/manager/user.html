@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.min.css">
+
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="../css/home.css">
+
+    <script src="../js/bootstrap.bundle.js"></script>
+    <script src="../js/vue.min.js"></script>
+    <script src="../js/axios.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 头部导航 -->
+        <div class="navbar  bg-dark navbar-expand-md w-100 ps-5 pe-5 ">
+            <!-- 左侧商城名字 -->
+            <div class="navbar-brand  text-success fs-5 me-5">
+                电影院购票系统
+            </div>
+            <!-- 中间导航输入框 -->
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li href="#" class="nav-item me-3">
+                        <a href="index.html" class="nav-link active text-white">首页</a>
+                    </li>
+                    <li href="#" class="nav-item  me-3">
+                        <a href="movie.html" class="nav-link text-white">电影</a>
+                    </li>
+                    <li class="nav-item  me-3">
+                        <input type="text" class="search border-0  ps-2 pt-1 pb-1 mt-1 opacity-100 " placeholder="搜索电影">
+                    </li>
+                </ul>
+            </div>
+            <!-- 右侧用户头像 -->
+            <div class="avatar position-relative">
+                <img src="../img/head.jpg" class="rounded-circle" alt="">
+                <!-- <a class="login border position-absolute end-0 top-100 text-center  text-decoration-none text-white d-none" style="width:100px;height:50px;line-height: 50px;">登录</a> -->
+            </div>
+
+        </div>
+        <!-- 主体部分 -->
+        <div class="container-fluid d-flex justify-space-between">
+            <!-- 左侧导航条 -->
+            <ul class="nav flex-column bg-light pt-5 text-center" style="height:calc(100vh - 56px);width:15%;">
+                <li class="nav-title mb-3">
+                    <h3>后台管理</h3>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-primary" href="javascript:void(0)">用户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="movie.html">电影管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="cinema.html">影院管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="hall.html">放映厅管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="schedule.html">场次管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="comment.html">评论管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="order.html">订单管理</a>
+                </li>
+            </ul>
+            <!-- 用户管理 -->
+            <div class="user-management border ps-5 pt-3" style="width:85%;height:calc(100vh - 56px);">
+                <!-- 标题 -->
+                <div class="user-management-title fs-5 border-bottom text-danger pb-3">用户管理</div>
+                <!-- 搜索条件 -->
+                <div class="search-info d-flex pt-2 pb-2 bg-light border ps-5 w-100 mt-5">
+                    <button class="bg-warning text-white border-0 ps-2 pe-2" data-bs-toggle="modal" data-bs-target="#addUser">添加用户</button>
+                    <div class="ms-5 d-flex ">
+                        <input type="text" placeholder="请输入账号" class="form-control ps-2 pt-1 pb-1" style="width:200px;" v-model="str">
+                        <button class="bg-success border-0 text-white ms-1" style="width:50px" @click="querys">搜索</button>
+                    </div>
+                </div>
+                <!-- 表格 -->
+                <table id="table" class="w-100 text-center border">
+                    <!-- 表格内容 -->
+                    <thead class="bg-light">
+                        <tr class="border-bottom">
+                            <th class="border pt-2 pb-2">用户ID</th>
+                            <th class="border pt-2 pb-2">用户账号</th>
+
+                            <th class="border pt-2 pb-2">邮箱</th>
+                            <th class="border pt-2 pb-2">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-bottom" v-for="u in users" :key="u.userId">
+                            <td class="border pt-2 pb-2">{{u.user_id}}</td>
+                            <td class="border pt-2 pb-2">{{u.user_name}}</td>
+                            <td class="border pt-2 pb-2">{{u.user_email}}</td>
+                            <td class="border pt-2 pb-2">
+                                <button class="border bg-info" @click.prevent="openShowUserInfoModal(u.user_id)"><a href="javascript:void(0)"  class="text-decoration-none text-dark ">查看</a></button>
+                                <button class="border bg-danger" @click="openConfirmDeleteModal(u.user_id)"><a href="#" class="text-decoration-none text-white ">删除</a></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- 添加用户的模态框 -->
+                <div id="addUser" class="modal fade">
+                    <div class="modal-dialog modal-md modal-dialog-centered ">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">添加用户</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>用户名</td>
+                                            <td>
+                                                <input class="form-control" type="text" name="username" v-model="u.user_name">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>密码</td>
+                                            <td>
+                                                <input class="form-control" type="text" name="pwd" v-model="u.user_pwd">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>邮箱</td>
+                                            <td>
+                                                <input class="form-control" type="text" name="email" v-model="u.user_email">
+                                            </td>
+                                        </tr>
+                                       <!--  <tr>
+                                            <td>头像</td>
+                                            <td>
+                                                <input class="form-control" type="file" name="headImg" >
+                                            </td>
+                                        </tr> -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">取消</button>
+                                <button class="btn btn-success btn-sm" @click="addUser">确定</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 点击查看显示的内容 -->
+                <div id="showUserInfo" class="modal fade">
+                    <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">编辑用户</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>用户名</td>
+                                            <td>{{u.user_name}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>密码</td>
+                                            <td>{{u.user_pwd}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>邮箱</td>
+                                            <td>{{u.user_email}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>头像</td>
+                                            <td>
+                                                <img class="img-thumbnail" src="../img/head.jpg" alt="">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                           <!--  <div class="modal-footer">
+                                <button class="btn btn-danger" data-bs-dismiss="modal">确定关闭</button>
+                            </div> -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 显示删除确认的模块框 -->
+                <div id="confirmDelete" class="modal fade">
+                    <div class="modal-dialog modal-sm modal-dialog-centered p-0">
+                        <div class="modal-content">
+                        
+                            <div class="modal-body">
+                                <h5>确认删除吗?</h5>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-info btn-sm" data-bs-dismiss="modal">取消</button>
+                                <button class="btn btn-danger btn-sm" @click="deleteUser">确定</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 显示操作结果的模态框 -->
+                <!-- <div id="showInfo" class="modal fade">
+                    <div class="modal-dialog modal-sm modal-dialog-centered p-0">
+                        <div class="modal-content">
+                           
+                            <div class="modal-body">
+                                <div class="alert alert-danger" role="alert">
+                                A simple danger alert—check it out!
+                                </div>
+                            </div>
+                    
+                        </div>
+                    </div>
+
+                </div>
+ -->
+                <!-- 分页 -->
+                <div class="w-100 d-flex pagination-container border align-items-center ps-5">
+                    <!-- 每页数量 -->
+                    <select name="pageCount" id="pageCount" class="h-50" v-model="pageSize" >
+                        <option value="10">10条/每页</option>
+                        <option value="15">15条/每页</option>
+                        <option value="20">20条/每页</option>
+                    </select>
+                    <!-- 数据总条数 -->
+                    <div class="ms-3 me-3 h-50 mt-2">共<span>{{pages}}</span>页</div>
+                    <!-- 分页按钮   -->
+                    <ul class="pagination  h-50 mb-2">
+                        <li class="page-item">
+                            <a class="page-link border-0 text-dark" href="#" aria-label="Previous">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" v-for="page in pages"><a class="page-link border-0 text-dark" href="#" @click.prevent="pageUsers(page)">{{page}}</a></li>
+<!--                        <li class="page-item "><a class="page-link border-0 text-dark" href="#">3</a></li>-->
+                        <li class="page-item ">
+                            <a class="page-link border-0 text-dark" href="#" aria-label="Next">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex ms-3 h-50">
+                        <span>到 <input type="text" value="1" style="width:40px;text-align: center;">页</span>
+                        <button class="border ms-2">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            methods: {
+                querys(){
+                    axios.get(`http://localhost:8080/servlet/queryByName?name=${this.str}`).
+                    then(response=>{
+                        console.log(response.data);
+                        this.users=response.data;
+                        console.log(this.users);
+                    })
+                },
+                method(){
+                    axios.post("http://localhost:8080/servlet/queryAll").
+                    then(response=>{
+                        this.users = response.data;
+                    }).catch(err =>{
+                        console.log("错误");
+                    })
+                },
+                deleteUser(){
+                    alert("删除")
+                    this.getModal("confirmDelete").hide();
+                    axios.get(`http://localhost:8080/servlet/deleteById?id=${this.a}`).
+                    then(response=>{
+                        if(response.data == "请先登录"){
+                            alert("请先登录");
+                            location.href="http://localhost:8080/servlet/login.html"
+                        }else if (response.data == "删除成功") {
+                            alert("删除成功");
+                            window.location.reload()
+                        }else{
+                            alert("删除失败")
+                        }
+                    }).catch(err=>{
+                        console.log("错误")
+                    })
+                },
+                openConfirmDeleteModal(id){
+                   this.a = id;
+                   this.getModal("confirmDelete").show();
+
+                },
+                pageUsers(page){
+                    // console.log(this.pageSize)
+                    // console.log(page)
+                    axios.get(`http://localhost:8080/servlet/queryAllLimit?start=${page}&page=${this.pageSize}`).
+                    then(response=>{
+                        // console.log(response.data)
+                        this.users = response.data.page;
+                        this.pages = response.data.pages
+                    }).catch(err=>{
+                        console.log("错误")
+                    })
+                },
+                addUser(){
+                    //
+
+                    this.getModal("addUser").hide();
+                    // this.getModal("showInfo").show();
+                    console.log(this.u);
+                    axios.post("http://localhost:8080/servlet/add",this.u).
+                    then(response=>{
+                        // console.log(response.data)
+                        if(response.data=="添加成功"){
+                            alert("添加成功")
+                            window.parent.location.reload();
+                        }else{
+                            alert("注册失败")
+                        }
+                    }).catch(err=>{
+                        console.log("错误")
+                    })
+                },
+                openShowUserInfoModal(num) {
+                    this.a = num;
+                    // console.log(this.a);
+                    this.getModal("showUserInfo").show();
+                    axios.post("http://localhost:8080/servlet/queryById",this.a).
+                    then(response =>{
+                        console.log(response.data);
+                        if(response.date == "请先登录"){
+                            alert("请先登录");
+                            location.href="http://localhost:8080/servlet/login.html"
+                        }else{
+                            this.u = response.data;
+                        }
+
+                        // console.log(this.u)
+                    })
+                },
+                getModal(modalId) {
+                    let modalDom = document.getElementById(modalId);
+                    if (modalDom) {
+                        /* let modal = bootstrap.Modal.getInstance(modalDom);
+                        if (!modal) {
+                            modal = new bootstrap.Modal(modalDom);
+                        } */
+                        return bootstrap.Modal.getOrCreateInstance(modalDom);
+
+                    } else {
+                        throw "无法获取到id为" + modalId + "的标签";
+                    }
+                }
+            },
+            data: {
+                pages:[1,2,3,4,5],
+                u:{
+                    user_name:"",
+                    user_pwd:"",
+                    user_email:"",
+                },//用来接收添加的用户信息
+                users: [],
+                a:"",
+                str:"",
+                //用于记录每页多少个
+                pageSize:10,
+                //用于接收共有多少页
+                pages:"",
+            },
+            watch:{
+                // 此处监听variable变量，当期有变化时执行
+                pageSize(item1,item2){
+                    // console.log(item1);
+                    // console.log(item2);
+                    this.pageUsers(1)
+                }
+                // item1为新值，item2为旧值
+            },
+            mounted(){
+                    // this.method()
+                var a = 1;
+                var b = 10;
+                axios.get(`http://localhost:8080/servlet/queryAllLimit?start=${a}&page=${b}`).
+                then(response=>{
+                    // console.log(response.data)
+                    this.users = response.data.page;
+                    this.pages = response.data.pages
+                }).catch(err=>{
+                    console.log("错误")
+                })
+            },
+
+        })
+    </script>
+</body>
+
+</html>

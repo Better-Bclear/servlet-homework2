@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影管理</title>
+
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="../css/movieInfo.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <script src="../js/bootstrap.bundle.js"></script>
+    <script src="../js/vue.min.js"></script>
+    <script src="../js/axios.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 头部导航 -->
+        <div class="navbar  bg-dark navbar-expand-md w-100 ps-5 pe-5 ">
+            <!-- 左侧商城名字 -->
+            <div class="navbar-brand  text-success fs-5 me-5">
+                电影院购票系统
+            </div>
+            <!-- 中间导航输入框 -->
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li href="#" class="nav-item me-3">
+                        <a href="index.html" class="nav-link active text-white">首页</a>
+                    </li>
+                    <li href="#" class="nav-item  me-3">
+                        <a href="movie.html" class="nav-link text-white">电影</a>
+                    </li>
+                    <li class="nav-item  me-3">
+                        <input type="text" class="search border-0  ps-2 pt-1 pb-1 mt-1 opacity-100 " placeholder="搜索电影">
+                    </li>
+                </ul>
+            </div>
+            <!-- 右侧用户头像 -->
+            <div class="avatar position-relative">
+                <img src="../img/head.jpg" class="rounded-circle" alt="">
+                <!-- <a class="login border position-absolute end-0 top-100 text-center  text-decoration-none text-white d-none" style="width:100px;height:50px;line-height: 50px;">登录</a> -->
+            </div>
+
+        </div>
+        <!-- 主体部分 -->
+        <div class="container-fluid d-flex justify-space-between">
+            <!-- 左侧导航条 -->
+            <ul class="nav flex-column bg-light pt-5 text-center" style="height:calc(100vh - 56px);width:15%;">
+                <li class="nav-title mb-3">
+                    <h3>后台管理</h3>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-dark" href="user.html">用户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="javascript:void(0)">电影管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="cinema.html">影院管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="hall.html">放映厅管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="schedule.html">场次管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="comment.html">评论管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="order.html">订单管理</a>
+                </li>
+            </ul>
+            <!-- 电影管理 -->
+            <div class="movie-management border ps-5 pt-3" style="width:85%;">
+                <!-- 标题 -->
+                <div class="user-management-title fs-5 border-bottom text-danger pb-3">电影管理</div>
+
+                <!-- 电影管理主体 -->
+                <div class="add-movie pt-5 mb-5">
+                   <a href="#" data-bs-toggle="modal" data-bs-target="#addMovie">
+                    <img src="../img/addMovie.png" alt="">
+                   </a> 
+                    <p class="mt-2 ps-5">添加电影</p>
+                </div>
+                <!-- 添加电影模态框 -->
+                <div id="addMovie" class="modal fade">
+                    <div class="modal-dialog modal-lg ">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">添加电影</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="d-flex justify-content-between">
+                                    <div class="col-6">
+                                        <div class="mb-3 row">
+                                           <label for="movieName" class="col-4 col-form-label text-center">电影名</label>
+                                           <div class="col-8">
+                                           <input type="text" class="form-control form-control-sm" id="movieName" v-model="m.movie_cn_name">
+                                           </div>
+                                       </div>
+                                       <div class="mb-3 row">
+                                            <label for="movieFgName" class="col-4 col-form-label text-center">电影外名</label>
+                                            <div class="col-8">
+                                            <input type="text" class="form-control form-control-sm" id="movieFgName" v-model="m.movie_fg_name">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="movieDirector" class="col-4 col-form-label text-center">导演</label>
+                                            <div class="col-8">
+                                            <input type="text" class="form-control form-control-sm" id="movieDirector" v-model="m.movie_director">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="movieDuration" class="col-4 col-form-label text-center">电影时长</label>
+                                            <div class="col-8">
+                                            <input type="text" class="form-control form-control-sm" id="movieDuration" v-model="m.movie_duration">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="movieType" class="col-4 col-form-label text-center">电影类型</label>
+                                            <div class="col-8">
+                                            <input type="text" class="form-control form-control-sm" id="movieType" v-model="m.movie_type">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="cinemaName" class="col-4 col-form-label text-center">上映时间</label>
+                                            <div class="col-8">
+                                            <input type="date" class="form-control form-control-sm" id="releaseDate" v-model="m.movie_release_date">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="movieCountry" class="col-4 col-form-label text-center">制片地区</label>
+                                            <div class="col-8">
+                                            <input type="text" class="form-control form-control-sm" id="movieCountry" v-model="m.movie_country">
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row mb-3 justify-content-center">
+                                            <div class="col-auto" v-show="show">
+                                                <div  class="d-flex justify-content-center align-content-center" style="height: 200px; ">
+                                                    <img ref="moviePicture" src="m.movie_picture" alt="电影海报" class="img-thumbnail">
+                                                </div>
+                                            </div>
+                                            <div class="col-auto" v-show="!show">
+                                                <div class="text-center" style="height: 200px; line-height: 200px;">                                   
+                                                        <span class="text-secondary">电影海报</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3 justify-content-center">
+                                            <div style="width: 95px;">
+                                                <input type="file" class="form-control col-auto form-control-sm" accept=".png,.jpg,.jpeg" value="添加海报" ref="moviePictureFile" @change="changeMoviePicture">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="movieDirector" class="col-4 col-form-label text-center">演职人员</label>
+                                            <div class="col-8">
+                                            <textarea class="form-control form-control-sm" id="movieDirector" v-model="m.movie_actor">演员名:角色名;演员名:角色名;</textarea>
+                                            </div>
+                                        </div>
+    
+                                       <div class="mb-3 row">
+                                           <label for="movieDetaillass" class="col-4 col-form-label text-center">电影详情</label>
+                                           <div class="col-8">
+                                           <textarea class="form-control" id="movieDetail" v-model="m.movie_detail"></textarea>
+                                           </div>
+                                       </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-danger" data-bs-dismiss="modal">取消</button>
+                                <button class="btn btn-success" @click="addMovie">确定</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 更新模态框-->
+                <div id="editMovie" class="modal fade">
+                    <div class="modal-dialog modal-lg ">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">更新电影</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="d-flex justify-content-between">
+                                    <div class="col-6" >
+                                        <div class="mb-3 row">
+                                           <label for="movieName" class="col-4 col-form-label text-center">电影名</label>
+                                           <div class="col-8">
+                                           <input type="text" class="form-control form-control-sm" id="movieName">
+                                           </div>
+                                       </div>
+                                       <div class="mb-3 row">
+                                            <label for="movieFgName" class="col-4 col-form-label text-center">电影外名</label>
+                                            <div class="col-8">
+                                            <input type="text" class="form-control form-control-sm" id="movieFgName">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="movieDirector" class="col-4 col-form-label text-center">导演</label>
+                                            <div class="col-8">
+                                            <input type="text" class="form-control form-control-sm" id="movieDirector">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="movieDuration" class="col-4 col-form-label text-center">电影时长</label>
+                                            <div class="col-8">
+                                            <input type="text" class="form-control form-control-sm" id="movieDuration">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="movieType" class="col-4 col-form-label text-center">电影类型</label>
+                                            <div class="col-8">
+                                            <input type="text" class="form-control form-control-sm" id="movieType">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="cinemaName" class="col-4 col-form-label text-center">上映时间</label>
+                                            <div class="col-8">
+                                            <input type="date" class="form-control form-control-sm" id="releaseDate">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="movieCountry" class="col-4 col-form-label text-center">制片地区</label>
+                                            <div class="col-8">
+                                            <input type="text" class="form-control form-control-sm" id="movieCountry">
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row mb-3 justify-content-center">
+                                            <div class="col-auto" v-show="updateShow">
+                                                <div  class="d-flex justify-content-center align-content-center" style="height: 200px; ">
+                                                    <img ref="updateMoviePicture" src="../file/upload/movies/3c0a744c-66fa-48fd-9b87-ce170cf7142c.jpg" alt="电影海报" class="img-thumbnail">
+                                                </div>
+                                            </div>
+                                            <div class="col-auto" v-show="!updateShow">
+                                                <div class="text-center" style="height: 200px; line-height: 200px;">                                   
+                                                        <span class="text-secondary">电影海报</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3 justify-content-center">
+                                            <div style="width: 95px;">
+                                                <input type="file" class="form-control col-auto form-control-sm" accept=".png,.jpg,.jpeg" value="添加海报" ref="updateMoviePictureFile" @change="changeMoviePicture">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="movieDirector" class="col-4 col-form-label text-center">演职人员</label>
+                                            <div class="col-8">
+                                            <textarea class="form-control form-control-sm" id="movieDirector">演员名:角色名;演员名:角色名;</textarea>
+                                            </div>
+                                        </div>
+    
+                                       <div class="mb-3 row">
+                                           <label for="movieDetaillass" class="col-4 col-form-label text-center">电影详情</label>
+                                           <div class="col-8">
+                                           <textarea class="form-control" id="movieDetail"></textarea>
+                                           </div>
+                                       </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-danger" data-bs-dismiss="modal">取消</button>
+                                <button class="btn btn-success" @click="updateMovie">确定</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 删除确认模态框 -->
+                <div id="confirmDelete" class="modal fade">
+                   <div class="modal-dialog modal-sm modal-dialog-centered p-0">
+                       <div class="modal-content">
+                       
+                           <div class="modal-body">
+                               <h5>确认删除吗?</h5>
+                           </div>
+                           <div class="modal-footer">
+                               <button class="btn btn-info btn-sm" data-bs-dismiss="modal">取消</button>
+                               <button class="btn btn-danger btn-sm" @click="deleteMovie">确定</button>
+                           </div>
+                       </div>
+                   </div>
+                </div>
+
+
+
+                <!-- 电影列表 -->
+                <div class="movie-info">
+                        <div class="text-danger fs-3">
+                            正在热映 (17部)
+                        </div>
+                        <!-- 分页 -->
+                        <ul class="pagination mt-3"> 
+                            <li class="page-item disabled" ><a class="page-link text-dark"  href="#">上一页</a></li>
+                            <li class="page-item active"><a class="page-link text-dark"  href="#">1</a></li>
+                            <li class="page-item"><a class="page-link text-dark"  href="#">2</a></li>
+                            <li class="page-item"><a class="page-link text-dark" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link text-dark"  href="#">下一页</a></li>
+                        </ul>
+
+                        <!-- 电影信息列表 -->
+                         <div class="movie-list mt-3 mb-5 d-flex flex-wrap ">
+                            <div class="card mt-5 me-5" style="width: 13%;" v-for="m of movies" :key="m.movie_Id">
+                                <ul class="list-group list-group-flush  position-relative list-unstyled">
+                                  <li class="list-group-item p-0">
+                                    <img :src="m.movie_picture" alt="" class="w-100" style="height:230px;">
+                                  </li>
+                                  <li class="position-absolute top-50 mt-5  w-100 ps-2 pe-2">
+                                    <span class=" text-white float-start" >{{m.movie_cn_name}}</span>
+                                    <span class=" text-warning fst-italic float-end">{{m.movie_score}}</span>
+                                 </li>
+                                  <li class="list-group-item text-center update" @click="openEditMovieModal(m.movie_Id)"><a href="javascript:void(0)" class="text-decoration-none text-danger">修改</a></li>
+                                  <li class="list-group-item text-center dele" @click="openConfirmDeleteModal(m.movie_Id)"><a href="javascript:void(0)" class="text-decoration-none text-danger">删除</a></li>
+                                </ul>
+                             </div>
+                         </div>    
+                         
+                </div>
+            </div>
+        </div>
+    </div>
+        <script>
+            new Vue({
+                el: '#app',
+                methods:{
+                    changeUpdateMoviePicture(){
+                        // alert(1);
+                        let moviePictureImg = this.$refs.updateMoviePicture;
+                        console.log(moviePictureImg);
+                        console.log(this.$refs.moviePictureFile)
+                        let picFile = this.$refs.updateMoviePictureFile.files[0];
+                        console.log(picFile);
+                        let that = this;
+                        if(moviePictureImg && picFile){
+                            console.log("selected...")
+                            let fileReader = new FileReader();
+                            fileReader.onload=function(ev){
+                                moviePictureImg.src=this.result;
+                                that.show = true;
+                            }
+                            fileReader.readAsDataURL(picFile);
+                        }
+                    },
+                    changeMoviePicture(){
+                        // alert(1);
+                        let moviePictureImg = this.$refs.moviePicture;
+                        console.log(moviePictureImg);
+                        console.log(this.$refs.moviePictureFile)
+                        let picFile = this.$refs.moviePictureFile.files[0];
+                        console.log(picFile);
+                        const fd = new FormData();
+                        fd.append("url",picFile);
+                        axios.post("http://localhost:8080/servlet/url",fd).
+                        then(response=>{
+                            console.log(response.data);
+                            this.m.movie_picture = response.data
+                            console.log(picFile)
+                            this.moviePic = '../file/upload/movies/'+picFile.name
+                            this.m.movie_picture = this.moviePic
+                            console.log(this.m.movie_picture)
+                        })
+                        let that = this;
+                        if(moviePictureImg && picFile){
+                            console.log("selected...")
+                            let fileReader = new FileReader();
+                            fileReader.onload=function(ev){
+                                moviePictureImg.src=this.result;
+                                that.show = true;
+                            }
+                            fileReader.readAsDataURL(picFile);
+                        }
+                    },
+                    openConfirmDeleteModal(id){
+
+                        console.log(id)
+                        this.getModal("confirmDelete").show();
+                    },
+                    deleteMovie(){
+
+                        this.getModal("confirmDelete").hide();
+                    },
+                    openEditMovieModal(id){
+                        this.getModal("editMovie").show();
+                    },
+                    updateMovie(){
+
+                        this.getModal("editMovie").hide();
+                    },
+                    addMovie(){
+                        this.getModal("addMovie").hide();
+                        this.m.movie_picture = this.moviePic;
+                        console.log(this.m)
+                        axios.post("http://localhost:8080/servlet/InsertMovie",this.m).
+                        then(response=>{
+                            console.log(response.data)
+                            window.parent.location.reload()
+                        }).catch(err=>{
+                            console.log("错误")
+                        })
+                    },
+                    getModal(id){
+                        return bootstrap.Modal.getOrCreateInstance("#"+id);
+                    },
+                    showAll(){
+                        axios.post("http://localhost:8080/servlet/queryAllMovie").
+                        then(response=>{
+                            console.log(response.data)
+                            this.movies = response.data
+                        })
+                    }
+                },
+                data: {
+                    updateShow:true,
+                    show:false,
+                    m:{},
+                    movies:[],
+                    moviePic:''
+                },
+                mounted(){
+                    this.showAll();
+                }
+
+            })
+
+        </script>
+</body>
+
+</html>

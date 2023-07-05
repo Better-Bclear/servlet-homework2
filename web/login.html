@@ -1,0 +1,177 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <script src="js/bootstrap.bundle.js"></script>
+    <link href="css/login.css" rel="stylesheet">
+	<script src="js/vue.min.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script></script>
+    <title>登录注册</title>
+</head>
+<body>
+	<div id="app">
+    <!-- ------------------------------------------------------------------- -->
+    <div class="screen">
+        <label class="title">电 影 订 票</label><br/>
+    </div>
+    <!-- 登录页 -->
+    <div class="content" style="float: left;">
+        <ul class="tab">
+            <li class="login" @click="show='login'">登录</li>
+            <li class="register" @click="show ='register'">注册</li>
+        </ul>
+        <div class="page">
+            <!-- 登录界面 -->
+            <div class="childpage" v-show="show == 'login'">
+                <div>
+                    <label class="login_title">用户登录</label><br/>
+                </div>
+                <div class="login_page">
+                    <div>
+                        <label>帐号</label><br/>
+                        <input id="UserName" type="text" v-model="user.user_name"/>
+                    </div>
+                    <div>
+                        <label>密码</label><br/>
+                        <input id="PassWord" type="password" v-model="user.user_pwd"/>
+                    </div>
+                </div>
+                <div class="lo_error">
+                    <label class="login_error"></label>
+                </div>
+                <div>
+                    <input type="button"  value="登录" class="btn btn-success login_btn" @click="loginbtn()" />
+                </div>
+                <div>
+                    <label class="login_version">@版权所有</label>
+                </div>
+            </div>
+            <!-- 注册界面 -->
+            <div class="childpage" v-show="show == 'register'" style="display: none">
+                <div>
+                    <label class="register_title">用户注册</label><br/>
+                </div>
+                <div class="register_page">
+                    <div>
+                        <label>帐号</label><br/>
+                        <input id="UserName" type="text" v-model="user1.user_name"/>
+                    </div>
+                    <div>
+                        <label>密码</label><br/>
+                        <input id="PassWord" type="password" v-model="user1.user_pwd"/>
+                    </div>
+                    <div>
+                        <label>邮箱</label><br/>
+                        <input id="Email" type="text" v-model="user1.user_email"/>
+                    </div>
+                    <div>
+                        <label>验证码</label><br/>
+                        <input id="Test" type="text" v-model="code">
+                        <img :src ="y" @click="huan()" height="30px" width="80px" alt="验证码">
+                    </div>
+                </div>
+                <div class="re_error">
+                    <label class="register_error"></label>
+                </div>
+                <div>
+                    <input type="button" value="注册" class="btn btn-warning register_btn" @click="registerbtn()"/>
+                </div>
+                <div>
+                    <label class="register_version">@版权所有</label>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+	</div>
+    <!-- ------------------------------------------------------------------- -->
+    <script>
+		new Vue({
+			el:"#app",
+			data:{
+				show:'login',
+                user:{},
+                user1:{},
+                y:"/servlet/y",
+                code:""
+			},
+			methods:{
+                huan(){
+                    this.y=`/servlet/y?id=${Math.random() }`
+                },
+
+                loginbtn(){
+                    axios.post("http://localhost:8080/servlet/login",this.user).
+                    then(response=>{
+                        console.log(response.data)
+                        if(response.data=="管理账户登录成功"){
+                            alert("管理账户登录成功");
+                            location.href="http://localhost:8080/servlet/manager/user.html"
+                        }else if (response.data=="普通用户登录成功"){
+                            alert("普通用户登录成功")
+                            location.href="http://localhost:8080/servlet/index.html"
+                        }else{
+                            alert("登录失败，请检查账号密码是否正确")
+                        }
+                    }).catch(err=>{
+                        console.log("错误")
+                    })
+                },
+                registerbtn(){
+                    console.log(this.user1);
+                    console.log(this.code)
+                    axios.post(`http://localhost:8080/servlet/reg?id=${this.code}`,this.user1).
+                    then(response=>{
+                        console.log(response.data)
+                        if(response.data=="注册成功"){
+                            alert("注册成功")
+                            location.href="http://localhost:8080/servlet/login.html"
+                        }else{
+                            alert("注册失败")
+                        }
+                    }).catch(err=>{
+                        console.log("错误")
+                    })
+                },
+
+				initWindow(){ //初始化登录框位置（垂直居中、水平4/7）
+					var middle = 3;
+					var colorNum = 200;
+					var clientHeight = document.documentElement.clientHeight;
+					var clientWidth = document.documentElement.clientWidth;
+					var content = document.getElementsByClassName('content')[0];
+					var screen = document.getElementsByClassName('screen')[0];
+					var title = document.getElementsByClassName('title')[0];
+					var bodys = document.getElementsByTagName('body')[0];
+					bodys.style.cssText = "background-size: " + clientWidth + "px auto;";
+					content.style.cssText = "margin:" + (clientHeight - content.clientHeight)/2 +"px " + 
+					clientWidth*4/7 + "px " +
+					(clientHeight - content.clientHeight)/2 + "px;";
+					screen.style.cssText = "margin:" + (content.clientHeight - screen.clientHeight)/2 +"px " + 
+					(clientWidth*4/7 - screen.clientWidth)/2 + "px " +
+					(content.clientHeight - screen.clientHeight)/2 + "px;";
+					setInterval(function(){
+						colorNum += middle;
+						if(colorNum>185){
+							middle = -3;
+						}else if(colorNum<80){
+							middle = 3;
+						}
+						title.style.cssText = "color:rgb(255," + colorNum + ", 0)";
+					},30);
+				}
+			},
+			created(){
+				this.initWindow();
+			}
+		})
+      
+
+    </script>
+    <!-- ------------------------------------------------------------------- -->
+</body>
+</html>

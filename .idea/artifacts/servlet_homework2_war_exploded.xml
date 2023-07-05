@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="servlet-homework2:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/servlet_homework2_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="servlet-homework2" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="module" name="JUnit5.7.0" module-name="servlet-homework2" />
+          <element id="library" level="project" name="junit-4.12" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="servlet-homework2/web/Web" />
+    </root>
+  </artifact>
+</component>
